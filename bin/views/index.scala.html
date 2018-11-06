@@ -1,0 +1,31 @@
+@()
+ <html lang="en">
+ <head>
+ <title>Login page</title>
+ <link rel="stylesheet"
+ href="@routes.Assets.versioned("compiled/styles.css")">
+ <link rel="shortcut icon" type="image/png"
+ href="@routes.Assets.versioned("images/favicon.png")">
+ </head>
+ <body>
+ <form id="user-data-form" role="form" action='@routes.UserController.home()' method="get" class="form-horizontal" autocomplete="off">
+    <fieldset class="user-fieldset">
+    <button type="submit" class="button--sm">Register User</button>
+    </fieldset>
+ </form>
+ <form id="user-data-form" role="form" action='@routes.UserController.home()' method="post" class="form-horizontal" align="center" autocomplete="off">
+    <fieldset
+	<legend>Login</legend>
+ 	<p>
+	<label for="username">Username:</label>
+	<input id="username" type="text" name="username" />
+	</p>
+	<p>
+	<label for="password">Password:</label>
+	<input id="password" type="password" name="password" />
+</p>
+<button type="submit" class="button--sm">Login</button>
+</fieldset>
+</form>
+</body>
+</html>
