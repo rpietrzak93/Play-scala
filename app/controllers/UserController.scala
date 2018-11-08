@@ -80,8 +80,7 @@ class UserController @Inject()
     userService.editUser(id) map { res =>
       Redirect(routes.UserController.home())
     }
-  }
-  
+  }  
 
 
 }

@@ -17,3 +17,13 @@ GET     /home                       controllers.UserController.home
 POST    /add                        controllers.UserController.addUser
 GET     /delete/:id                 controllers.UserController.deleteUser(id : Long)
 GET     /edit/:id                   controllers.UserController.editUser(id : Long)
+
+
+
+# user/admin stuff
+GET  /users/login               controllers.LoginController.showLoginForm
+POST /users/doLogin             controllers.LoginController.processLoginAttempt
+
+# pages for authenticated users
+GET  /users/logout              controllers.AuthenticatedUserController.logout
+GET  /landingPage               controllers.LandingPageController.showLandingPage

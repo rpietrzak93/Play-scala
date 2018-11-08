@@ -3,6 +3,7 @@ package dao
 
 import com.google.inject.ImplementedBy
 import model.User
+import model.Login
 import scala.concurrent.Future
 
 @ImplementedBy(classOf[UserDAOImpl])
@@ -14,12 +15,14 @@ trait UserDAO {
   def listAll : Future[Seq[User]]
   def editUser(id :Long) : Future[Int]
   def findByLogin(login: String) : Future[Option[User]]
+  def lookupUser(log: Login) : Boolean
 
 }
 
 import javax.inject.Inject
 import com.google.inject.Singleton
 import model.User
+import model.Login
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import scala.concurrent.Future
@@ -78,10 +81,11 @@ implicit val users = TableQuery[UserTable]
      db.run(users.filter(_.id===id).delete)
   }
 
-   def lookupUser(u: User): Boolean = {
+  def lookupUser(log: Login): Boolean = {
         //TODO query your database here
-        if (u.login == "foo" && u.password == "foo") true else false
-    }
+    
+      if (log.username == "foo" && log.password == "foo") true else false
+   }
 
 
   
