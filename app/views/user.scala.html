@@ -1,5 +1,5 @@
 @(userForm: Form[model.UserFormData],users : Seq[model.User])(implicit request: RequestHeader,messages : Messages)
-@main(Messages("app.name")) {
+@main(Messages("add User")) {
 @request.flash.get(messages("flash.success")).map { msg =>
 <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -12,6 +12,15 @@
     <strong>@msg</strong>
 </div>
 }
+
+        @* Global errors are not tied to any particular form field *@
+    @if(userForm.hasGlobalErrors) {
+        @userForm.globalErrors.map { error: FormError =>
+         <div>
+            Error: User exist, try another login
+         </div>
+        }
+     }
 <form id="user-data-form" role="form" action='@routes.UserController.addUser()' method="post" class="form-horizontal" align="center" autocomplete="off">
 
     <fieldset class="user-fieldset">
@@ -36,9 +45,11 @@
                     <div class="user-form" id="login_field_value">
                         <div class="controls col-xs-offset-3 col-xs-9">
                             <div class="input-group">
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                                <input type="text" id="login" name="login" value="" placeholder="Login" class="form-control input-lg" required>
-                            </div>
+                                <input type="text" name="login" value="@userForm("login").value" placeholder="login" required>
+           					     @userForm.error("userExists").map { formError =>
+            				        <span class="form-error is-visible">@formError.message</span>
+             					   }
+             				</div>
                         </div>
                     </div>
                 </td>
@@ -54,13 +65,15 @@
                         </div>
                     </div>
                 </td>
-                <td align="center">
-                    <div class="user-form" id="password_field_value">
+                <td align="left">
+                    <div class="user-form" id="password_field_label">
                         <div class="controls col-xs-offset-3 col-xs-9">
                             <div class="input-group">
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                                <input type="text" id="password" name="password" value="" placeholder="Passwoed" class="form-control input-lg" required>
-                            </div>
+            				    <input type="text" name="password" value="@userForm("password").value" placeholder="Password" required>
+           					     @userForm.error("password").map { formError =>
+            				        <span class="form-error is-visible">@formError.message</span>
+             					   }
+                  		      </div>
                         </div>
                     </div>
                 </td>

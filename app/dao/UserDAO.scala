@@ -13,7 +13,7 @@ trait UserDAO {
   def get(id : Long) : Future[Option[User]]
   def delete(id : Long) : Future[Int]
   def listAll : Future[Seq[User]]
-  def editUser(id :Long) : Future[Int]
+  def editUser(user:User) : Future[String]
   def findByLogin(login: String) : Future[Option[User]]
   def lookupUser(log: Login) : Boolean
 
@@ -76,9 +76,19 @@ implicit val users = TableQuery[UserTable]
     db.run(users.filter(_.login === login).result.headOption)
   }
   
-  def editUser(id: Long) = {
-     val user = get(id) 
-     db.run(users.filter(_.id===id).delete)
+
+  def editUser(user: User): Future[String] = {
+    if (user.id == 0) {
+      add(user)
+    } else {
+      db.run(users
+        .filter(_.id === user.id)
+        .update(user))
+        .map(res => s"Category user.id successfully updated")
+        .recover {
+          case ex: Exception => ex.getCause.getMessage
+        }
+    }
   }
 
   def lookupUser(log: Login): Boolean = {

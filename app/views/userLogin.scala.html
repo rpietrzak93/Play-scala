@@ -1,19 +1,32 @@
 @(form: Form[model.Login], postUrl: Call
 )(implicit request: MessagesRequestHeader)
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
-</head>
-
+ <html lang="en">
+ <head>
+ <title>Login page</title>
+ <link rel="stylesheet"
+ href="@routes.Assets.versioned("compiled/styles.css")">
+ <link rel="shortcut icon" type="image/png"
+ href="@routes.Assets.versioned("images/favicon.png")">
+ </head>
 <body id="user-login">
-<div id="content">
-    <div id="user-login-form">
+<form id="user-data-form" role="form" action='@routes.UserController.home()' method="get" class="form-horizontal" autocomplete="off">
+    <fieldset class="user-fieldset">
+    <button type="submit" class="button--sm">Register User</button>
+    </fieldset>
+ </form>
 
-        <h1>User Login</h1>
 
-        @request.flash.data.map{ case (name, value) =>
+<form id="user-data-form" role="form" class="form-horizontal" autocomplete="off">
+    <fieldset
+    <table align="center" cellspacing="20">
+       <h1>User Login</h1>
+            <tr>
+                <td align="left">
+                    <div class="user-form" id="login_field_label">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+								    @request.flash.data.map{ case (name, value) =>
             <div>@name: @value</div>
         }
 
@@ -41,9 +54,17 @@
             'id -> "password",
             'size -> 60
         )
+                            </div>
+                        </div>
+                    </div>
+                </td>
+    
+        </tr>
+        </table>
         <button>Login</button>
         }
-    </div>
-</div>
+
+</fieldset>
+</form>
 </body>
 </html>

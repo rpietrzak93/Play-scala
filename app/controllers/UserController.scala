@@ -1,7 +1,7 @@
 package controllers
 
 import com.google.inject.Inject
-import model.{User, UserForm, Global, UserFormData}
+import model.{User, Global, UserFormData, UserForm}
 
 import play.api.mvc.{Action, Controller}
 import service.UserService
@@ -13,6 +13,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.mvc._
+import scala.util.Success
 
   /**
    * Create an Action to render an HTML page.
@@ -33,8 +34,6 @@ class UserController @Inject()
  *
  * @return The result to display.
  */
- 
-
    
   def home() = Action.async { implicit  request =>
     userService.listAllUsers map { users =>
@@ -49,19 +48,21 @@ class UserController @Inject()
  * 
  */
   
-  def addUser() = Action.async { implicit request =>
-   
-    
-    UserForm.userForm.bindFromRequest.fold(
+  def addUser() = Action.async { implicit request =>     
+     UserForm.userForm.bindFromRequest.fold(
       // if any error in submitted data
- 
-      errorForm => Future.successful(Ok(views.html.user(errorForm, Seq.empty[User]))),
-      data => {
-        val newUser = User(0,data.login, data.password, data.firstName,data.lastName,data.mobile,data.email)
-   
-        userService.addUser(newUser).map(res =>
-          Redirect(routes.HomeController.index()).flashing("success" -> "Registration success"))
+      errorForm => Future.successful(BadRequest(views.html.user(errorForm, Seq.empty[User]))),
+      data => { 
         
+        val existUser = userService.findByLogin(data.login) 
+        val newUser = User(0,data.login, data.password, data.firstName,data.lastName,data.mobile,data.email)
+        
+          existUser.flatMap {
+          case Some(a) => val form =  UserForm.userForm.fill(data).withError("userExists", "User with this login already exists!")
+                Future.successful(BadRequest(views.html.user(form, Seq.empty[User])))
+          case None => userService.addUser(newUser).map(res =>
+              Redirect(routes.LoginController.showLoginForm).flashing("Success" -> "Registration success")) 
+        }       
       })
   }
   
@@ -76,10 +77,8 @@ class UserController @Inject()
     }
   }
   
-  def editUser(id : Long) = Action.async { implicit request =>
-    userService.editUser(id) map { res =>
-      Redirect(routes.UserController.home())
-    }
+  def editUser(id : Long) = Action {
+    Redirect(routes.UserController.home())
   }  
 
 

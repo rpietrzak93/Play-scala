@@ -4,7 +4,7 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+
 
 
 
@@ -21,9 +21,9 @@ GET     /edit/:id                   controllers.UserController.editUser(id : Lon
 
 
 # user/admin stuff
-GET  /users/login               controllers.LoginController.showLoginForm
-POST /users/doLogin             controllers.LoginController.processLoginAttempt
+GET  /             controllers.LoginController.showLoginForm
+POST /doLogin             controllers.LoginController.processLoginAttempt
 
 # pages for authenticated users
-GET  /users/logout              controllers.AuthenticatedUserController.logout
+GET  /logout              controllers.AuthenticatedUserController.logout
 GET  /landingPage               controllers.LandingPageController.showLandingPage

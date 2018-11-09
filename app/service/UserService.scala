@@ -10,7 +10,7 @@ trait UserService {
   def getUser(id : Long) : Future[Option[User]]
   def deleteUser(id : Long) : Future[Int]
   def listAllUsers : Future[Seq[User]]
-  def editUser(id: Long) : Future[Int]
+  def editUser(user:User) : Future[String]
   def findByLogin(login: String) : Future[Option[User]]
 }
 
@@ -39,8 +39,8 @@ class UserServiceImpl @Inject()(userDAO: UserDAO) extends UserService {
     userDAO.listAll
   }
   
-  def editUser(id: Long): Future[Int] = {
-    userDAO.editUser(id)    
+ def editUser(user:User) : Future[String] = {
+    userDAO.editUser(user)    
   }
   def findByLogin(login: String) : Future[Option[User]] = {
     userDAO.findByLogin(login)
