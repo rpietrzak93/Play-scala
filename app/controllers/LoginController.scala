@@ -6,6 +6,9 @@ import dao.UserDAO
 import play.api.data.Forms._
 import play.api.data._
 import play.api.mvc._
+import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class LoginController @Inject()(
     cc: MessagesControllerComponents,
@@ -30,30 +33,32 @@ class LoginController @Inject()(
     def showLoginForm = Action { implicit request: MessagesRequest[AnyContent] =>
         Ok(views.html.userLogin(form, formSubmitUrl))
     }
-
-    def processLoginAttempt = Action { implicit request: MessagesRequest[AnyContent] =>
-        val errorFunction = { formWithErrors: Form[Login] =>
-            // form validation/binding failed...
-            BadRequest(views.html.userLogin(formWithErrors, formSubmitUrl))
-        }
-        val successFunction = { user: Login =>
-            // form validation/binding succeeded ...
-            val foundUser: Boolean = userDao.lookupUser(user)
-            if (foundUser) {
-                Redirect(routes.LandingPageController.showLandingPage)
-                    .flashing("info" -> "You are logged in.")
-                    .withSession(Global.SESSION_USERNAME_KEY -> user.username)
-            } else {
-                Redirect(routes.LoginController.showLoginForm)
-                    .flashing("error" -> "Invalid username/password.")
-            }
-        }
-        val formValidationResult: Form[Login] = form.bindFromRequest
+    
+    def processLoginAttempt = Action.async { implicit request =>     
+      val formValidationResult: Form[Login] = form.bindFromRequest
         formValidationResult.fold(
-            errorFunction,
-            successFunction
-        )
-    }
+        formWithErrors => Future.successful(BadRequest(views.html.userLogin(formWithErrors, formSubmitUrl))),
+        data => { 
+          val existUser = userDao.findByLogin(data.username)         
+          existUser.flatMap {
+          case Some(valu) => {
+            if(valu.password == data.password){
+              Future.successful(Redirect(routes.LandingPageController.showLandingPage)
+                    .flashing("info" -> "You are logged in.")
+                    .withSession(Global.SESSION_USERNAME_KEY -> data.username))
+            }
+            else{
+              Future.successful(Redirect(routes.LoginController.showLoginForm)
+                    .flashing("error" -> "Invalid username/password."))  
+            }
+              }                                
+         case None => Future.successful(Redirect(routes.LoginController.showLoginForm)
+                    .flashing("error" -> "Invalid username/password."))   
+        }       
+      })
+     
+  }
+
 
     private def lengthIsGreaterThanNCharacters(s: String, n: Int): Boolean = {
         if (s.length > n) true else false

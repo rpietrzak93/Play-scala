@@ -15,18 +15,14 @@
     </fieldset>
  </form>
 
+<fieldset class="user-fieldset">
+<div id="content">
 
-<form id="user-data-form" role="form" class="form-horizontal" autocomplete="off">
-    <fieldset
-    <table align="center" cellspacing="20">
-       <h1>User Login</h1>
-            <tr>
-                <td align="left">
-                    <div class="user-form" id="login_field_label">
-                        <div class="controls col-xs-offset-3 col-xs-9">
-                            <div class="input-group">
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-								    @request.flash.data.map{ case (name, value) =>
+    <div id="user-login-form">
+
+        <h1>User Login</h1>
+
+        @request.flash.data.map{ case (name, value) =>
             <div>@name: @value</div>
         }
 
@@ -38,7 +34,11 @@
                 </div>
             }
         }
+
         @helper.form(postUrl, 'id -> "user-login-form") {
+
+    
+
         @helper.inputText(
             form("username"),
             '_label -> "Username",
@@ -54,17 +54,14 @@
             'id -> "password",
             'size -> 60
         )
-                            </div>
-                        </div>
-                    </div>
-                </td>
-    
-        </tr>
-        </table>
+
         <button>Login</button>
+
         }
 
+    </div>
+
+</div>
 </fieldset>
-</form>
 </body>
 </html>

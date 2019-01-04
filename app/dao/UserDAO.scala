@@ -15,7 +15,6 @@ trait UserDAO {
   def listAll : Future[Seq[User]]
   def editUser(user:User) : Future[String]
   def findByLogin(login: String) : Future[Option[User]]
-  def lookupUser(log: Login) : Boolean
 
 }
 
@@ -64,7 +63,9 @@ implicit val users = TableQuery[UserTable]
   }
 
   override def get(id: Long): Future[Option[User]] = {
+    
     db.run(users.filter(_.id === id).result.headOption)
+    
   }
   
   override def listAll: Future[Seq[User]] = {
@@ -90,18 +91,6 @@ implicit val users = TableQuery[UserTable]
         }
     }
   }
-
-  def lookupUser(log: Login): Boolean = {
-        //TODO query your database here
-    
-      if (log.username == "foo" && log.password == "foo") true else false
-   }
-
-
-  
-  
-  
-  
   
 }
 
