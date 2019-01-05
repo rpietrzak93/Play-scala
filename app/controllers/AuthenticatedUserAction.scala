@@ -22,7 +22,7 @@ class AuthenticatedUserAction @Inject() (parser: BodyParsers.Default)(implicit e
         val maybeUsername = request.session.get(model.Global.SESSION_USERNAME_KEY)
         maybeUsername match {
             case None => {
-                Future.successful(Forbidden("Dude, you’re not logged in."))
+                Future.successful(Forbidden("You’re not logged in."))
             }
             case Some(u) => {
                 val res: Future[Result] = block(request)

@@ -1,6 +1,6 @@
 @(logoutUrl: Call)(implicit flash: Flash)
 
-@main("Welcome to Play") {
+@main("Welcome") {
     <h1>Welcome to Play!</h1>
 
     @* show the flash message (Option 1) *@
@@ -11,3 +11,14 @@
     </div>
 
 }
+
+<div class="bank-display" >
+    <fieldset>
+        <legend align="center"><h3>Registered Notes</h3></legend>
+           		<td><a href="@routes.BankController.listBanks">Create Topic</a></td>
+            </tr>
+            
+        </table>
+    </fieldset>
+</div>
+

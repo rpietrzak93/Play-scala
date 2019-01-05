@@ -9,10 +9,13 @@ import play.api.mvc._
 import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import dao.BankProduct
+import dao.BankDAO
+import dao.Bank
 
 class LoginController @Inject()(
     cc: MessagesControllerComponents,
-    userDao: UserDAO
+    userDao: UserDAO, bankDAO: BankDAO
 ) extends MessagesAbstractController(cc) {
 
     private val logger = play.api.Logger(this.getClass)
@@ -35,10 +38,12 @@ class LoginController @Inject()(
     }
     
     def processLoginAttempt = Action.async { implicit request =>     
+      
       val formValidationResult: Form[Login] = form.bindFromRequest
         formValidationResult.fold(
         formWithErrors => Future.successful(BadRequest(views.html.userLogin(formWithErrors, formSubmitUrl))),
         data => { 
+          
           val existUser = userDao.findByLogin(data.username)         
           existUser.flatMap {
           case Some(valu) => {
