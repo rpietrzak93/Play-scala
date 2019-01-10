@@ -148,3 +148,6 @@ case class BankForm(name: String)
 case class BankProduct(name: String, bankId: Int, id: Int) //Option[Int] = None
 case class BankProductForm(name: String, bankId: Int) 
 
+
+
+

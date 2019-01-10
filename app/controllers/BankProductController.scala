@@ -20,7 +20,7 @@ import play.api.mvc._
 import scala.util.Success
 
 class BankProductController @Inject()
-(bankService: BankService, cc: MessagesControllerComponents,
+(bankService: BankService, cc: MessagesControllerComponents, authenticatedUserAction: AuthenticatedUserAction
  ) extends MessagesAbstractController(cc) with I18nSupport {
 
 /**
@@ -31,16 +31,51 @@ class BankProductController @Inject()
   
   val bankProductForm: Form[BankProductForm] = Form(
   mapping(
-    "name"        -> nonEmptyText(maxLength = 14),
+    "name"        -> nonEmptyText(maxLength = 120),
     "bankId"      -> number
 )(BankProductForm.apply)(BankProductForm.unapply))
+
+val editForm: Form[BankProduct] = Form(
+  mapping(
+    "name"        -> nonEmptyText(maxLength = 120),
+    "bankId"      -> number,
+    "id"          -> number
+)(BankProduct.apply)(BankProduct.unapply))
    
+
+
+private val logoutUrl = routes.AuthenticatedUserController.logout
+
+    // this is where the user comes immediately after logging in.
+    // notice that this uses `authenticatedUserAction`.
+    def showLandingPage() = authenticatedUserAction { implicit request: Request[AnyContent] =>
+        Ok(views.html.loginLandingPage(logoutUrl))
+    }
+
+
+def listBankAndProducts() = Action.async { implicit  request =>
+    //bankService.create("dollar", 2, Some(1))
+    //bankService.create(BankProduct("xxx", 5, Some(1)))
+    val bankProduct = bankService.getBankWithProduct()
+     bankProduct map { banks =>
+      Ok(views.html.showNotes( banks))
+    }
+  }
+  
+  def listAll() = Action.async { implicit  request => 
+    bankService.getAllBankWithProduct() map { banks =>
+     
+      Ok(views.html.allNotes(bankProductForm, banks))
+    }
+  }
+
+
   def listBankProducts() = Action.async { implicit  request =>
     //bankService.create("dollar", 2, Some(1))
     //bankService.create(BankProduct("xxx", 5, Some(1)))
     
     bankService.getBankAll() map { banks =>
-      Ok(views.html.bankProduct(bankProductForm, banks))
+      Ok(views.html.note(bankProductForm, banks))
     }
   }
   
@@ -48,13 +83,26 @@ class BankProductController @Inject()
      var list = List.empty[dao.Bank]
      bankProductForm.bindFromRequest.fold(
       // if any error in submitted data
-      errorForm => Future.successful(BadRequest(views.html.bankProduct(errorForm,  list))),
+      errorForm => Future.successful(BadRequest(views.html.note(errorForm,  list))),
       data => { 
         val newBank = BankProduct(data.name, data.bankId, 1)
         bankService.create(newBank)
-        Future.successful(Redirect(routes.BankProductController.listBankProducts)
-                    .flashing("Success" -> "Bank added")) 
+        Future.successful(Redirect(routes.BankProductController.listBankAndProducts)
+                    .flashing("Success" -> "Note added")) 
               
+      })
+  }
+  
+  def confirmEdit() = Action.async { implicit request =>    
+    
+     editForm.bindFromRequest.fold(
+      // if any error in submitted data
+      errorForm => Future.successful(Redirect(routes.BankProductController.listBankAndProducts)),
+      data => { 
+        Console.println(data.name, data.bankId, data.id)
+        bankService.update(BankProduct(data.name, data.bankId, data.id))
+        Future.successful(Redirect(routes.BankProductController.listBankAndProducts)
+                    .flashing("Success" -> "Note added"))               
       })
   }
   
@@ -65,8 +113,23 @@ class BankProductController @Inject()
  */
   def deleteBankProduct(id : Integer) = Action.async { implicit request =>
     bankService.delete(id) map { res =>
-      Redirect(routes.BankProductController.listBankProducts())
+      Redirect(routes.BankProductController.listBankAndProducts())
     }
+  }
+  
+  
+  def editData(id : Integer) = Action.async { implicit request =>
+    val eBank = bankService.getById(id)
+    eBank.flatMap {
+          case Some(a) => val filledForm = editForm.fill(BankProduct(a.name, a.bankId, a.id))
+          bankService.getBankAll() map { banks =>
+            
+            Ok(views.html.editPage(filledForm))}
+            
+          case None =>  Future.successful(Redirect(routes.BankController.listBanks)
+                    .flashing("Success" -> "Bank added")) 
+     }   
+    
   }
   
 }

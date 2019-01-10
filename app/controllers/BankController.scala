@@ -30,7 +30,7 @@ class BankController @Inject()
   
   val bankForm: Form[BankForm] = Form(
   mapping(
-      "name"        -> nonEmptyText(maxLength = 14),
+      "name"        -> nonEmptyText(maxLength = 140),
    
 )(BankForm.apply)(BankForm.unapply))
    
@@ -43,14 +43,14 @@ class BankController @Inject()
     //bankService.create(BankProduct("xxx", 5, Some(1)))
     
     bankService.getBankAll() map { banks =>
-      Ok(views.html.bank(bankForm,  banks))
+      Ok(views.html.topic(bankForm,  banks))
     }
   }
   
   def addBank() = Action.async { implicit request =>     
      bankForm.bindFromRequest.fold(
       // if any error in submitted data
-      errorForm => Future.successful(BadRequest(views.html.bank(errorForm, Seq.empty[Bank]))),
+      errorForm => Future.successful(BadRequest(views.html.topic(errorForm, Seq.empty[Bank]))),
       data => { 
         val newBank = Bank(data.name, 0)
         bankService.createBank(newBank)
@@ -66,17 +66,19 @@ class BankController @Inject()
  * @return The result to display.
  */
   def deleteBank(id : Integer) = Action.async { implicit request =>
+    
     bankService.deleteBank(id) map { res =>
       Redirect(routes.BankController.listBanks())
     }
   }
   
   def editBank(id : Integer) = Action.async { implicit request =>
-    val eBank = bankService.getBankById(id)
+    val eBank = bankService.getBankById(29)
     eBank.flatMap {
           case Some(a) => val filledForm = bankForm.fill(BankForm(a.name))
           bankService.getBankAll() map { banks =>
-            Ok(views.html.bank(filledForm,  banks))}
+            
+            Ok(views.html.topic(filledForm,  banks))}
             
           case None =>  Future.successful(Redirect(routes.BankController.listBanks)
                     .flashing("Success" -> "Bank added")) 

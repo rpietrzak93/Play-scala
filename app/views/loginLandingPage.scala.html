@@ -1,24 +1,20 @@
 @(logoutUrl: Call)(implicit flash: Flash)
 
 @main("Welcome") {
-    <h1>Welcome to Play!</h1>
-
+    <legend align="center"><h1>Welcome</h1></legend>
     @* show the flash message (Option 1) *@
     @flash.get("info").getOrElse("")
-
+    <fieldset>
     <div>
         <a href="@logoutUrl">logout</a>
     </div>
-
-}
-
-<div class="bank-display" >
-    <fieldset>
-        <legend align="center"><h3>Registered Notes</h3></legend>
-           		<td><a href="@routes.BankController.listBanks">Create Topic</a></td>
-            </tr>
-            
-        </table>
     </fieldset>
+}
+<div class="bank-display" >
+    
+        <legend align="center"><h1>Choose option</h1>
+           		<a href="@routes.BankController.listBanks"><button>Create New Topic</button></a><br><br>	
+           		<a href="@routes.BankProductController.listBankProducts"><button>Add notes</button></a><br><br>
+           		<a href="@routes.BankProductController.listBankAndProducts"><button> Show All Notes</button></a>
+            </legend>
 </div>
-

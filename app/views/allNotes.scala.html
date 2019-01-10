@@ -1,4 +1,4 @@
-@(bankForm: Form[dao.BankForm], banks : Seq[dao.Bank])(implicit request: RequestHeader,messages : Messages)
+@(bankProductForm: Form[dao.BankProductForm],  bankProducts : List[(dao.Bank, Option[dao.BankProduct])])(implicit request: RequestHeader,messages : Messages)
 @main(Messages("add Bank")) {
 @request.flash.get(messages("flash.success")).map { msg =>
 <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
@@ -13,24 +13,23 @@
 </div>
 }
 
-   
-<form id="bank-data-form" role="form" action='@routes.BankController.addBank()' method="post" class="form-horizontal" align="center" autocomplete="off">
+<form id="bank-data-form" role="form" action='@routes.BankProductController.addBankProduct()' method="post" class="form-horizontal" align="center" autocomplete="off">
 
     <fieldset class="bank-fieldset">
 
 <div class="user-form">
             <label class="form-title" style="color: #F8741B; font-size: 22px;font-weight: bold; text-decoration:none">@messages("Add Bank")</label>
         </div>
+@* adding 'size to helper.select creates a select/option area (single or multi-select) *@
 
-        <br/>
-        <table align="center" cellspacing="20">
+   <br/>        
             <tr>
                 <td align="left">
                     <div class="bank-form" id="login_field_label">
                         <div class="controls col-xs-offset-3 col-xs-9">
                             <div class="input-group">
                                 <span class="input-group-addon"><span class="glyphicon glyphicon-bank"></span></span>
-                                <strong>@messages("name")</strong> :
+                                <strong>@messages("Note")</strong> :
                             </div>
                         </div>
                     </div>
@@ -39,15 +38,40 @@
                     <div class="bank-form" id="login_field_value">
                         <div class="controls col-xs-offset-3 col-xs-9">
                             <div class="input-group">
-                                <input type="text" name="name" value="@bankForm("name").value" placeholder="name" required>
+                                <input type="text" name="name" value="@bankProductForm("name").value" placeholder="note" size = 120 height =30 required> 
              				</div>
                         </div>
                     </div>
                 </td>
             </tr>
-            
+            <tr>
+                <td align="left">
+                    <div class="bank-form" id="login_field_label">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-bankProduct"></span></span>
+                                <strong>@messages("Bank")</strong> :
+                            </div>
+                        </div>
+                    </div>
+                </td>
+               <div class="bank-display" >
+    <fieldset>
+        <legend align="center"><h3>Registered Banks</h3></legend>
+        <table cellspacing="20">
+            <tr>
             </tr>
+            @for(bank <- bankProducts){
+            <tr>
+                <td>@bank</td>
+
+            </tr>
+            }
         </table>
+    </fieldset>
+</div>
+            </tr>
+            </tr>
         <br/>
         <div class="form-actions controls ynt-btn-xlarge">
             <button type="submit" class="btn btn-primary ynt-btn-orange">Add</button>
@@ -55,33 +79,7 @@
 
     </fieldset>
 </form>
-<div class="bank-display" >
-    <fieldset>
-        <legend align="center"><h3>Registered Notes</h3></legend>
-           		<td><a href="@routes.BankProductController.listBankProducts">Create Note</a></td>
-            </tr>
-            
-        </table>
-    </fieldset>
-</div>
-<div class="bank-display" >
-    <fieldset>
-        <legend align="center"><h3>Registered Banks</h3></legend>
-        <table cellspacing="20">
-            <tr>
-                <th>@messages("id")</th>
-                <th>@messages("name")</th> 
-            </tr>
-            @for(bank <- banks){
-            <tr>
-                <td>@bank.id</td>
-                <td>@bank.name</td>
-           		<td><a href="@routes.BankController.deleteBank(bank.id)">delete</a></td>
-           		<td><a href="@routes.BankController.editBank(bank.id)">edit</a></td>
-            </tr>
-            }
-        </table>
-    </fieldset>
-</div>
+
+
 
 }

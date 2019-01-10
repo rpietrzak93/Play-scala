@@ -1,5 +1,5 @@
 @(bankProductForm: Form[dao.BankProductForm],  bankProducts : List[dao.Bank])(implicit request: RequestHeader,messages : Messages)
-@main(Messages("add Bank")) {
+@main(Messages("Add Description")) {
 @request.flash.get(messages("flash.success")).map { msg =>
 <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
@@ -13,16 +13,49 @@
 </div>
 }
 
+<fieldset class="bank-fieldset">
+
+<td><a href="@routes.LandingPageController.showLandingPage">Go to main page</a></td>
+
+
 <form id="bank-data-form" role="form" action='@routes.BankProductController.addBankProduct()' method="post" class="form-horizontal" align="center" autocomplete="off">
 
     <fieldset class="bank-fieldset">
 
 <div class="user-form">
-            <label class="form-title" style="color: #F8741B; font-size: 22px;font-weight: bold; text-decoration:none">@messages("Add Bank")</label>
-        </div>
-@* adding 'size to helper.select creates a select/option area (single or multi-select) *@
-
-   <br/>        
+            <label class="form-title" style="color: #F8741B; font-size: 22px;font-weight: bold; text-decoration:none"><h3>@messages("Add Note")</h3></label>
+        </div> 
+   			  <tr>
+                <td align="left">
+                    <div class="bank-form" id="login_field_label">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-bankProduct"></span></span>
+                                <strong>@messages("Title")</strong> :
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">
+                    <div class="bankProduct-form" id="login_field_value">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                            <select id="directors-select" name="bankId" >
+							@for(bank <- bankProducts){
+     				       <tr>
+               				 <td>@bank.id</td>
+            			    <td>@bank.name</td>
+          				  </tr>       
+  						  <option value="@bank.id">@bank.name</option>
+							}
+						
+                                </select>
+                                
+             				</div>
+                        </div>
+                    </div>
+                </td>
+            </tr><br>
             <tr>
                 <td align="left">
                     <div class="bank-form" id="login_field_label">
@@ -38,52 +71,23 @@
                     <div class="bank-form" id="login_field_value">
                         <div class="controls col-xs-offset-3 col-xs-9">
                             <div class="input-group">
-                                <input type="text" name="name" value="@bankProductForm("name").value" placeholder="note" size = 120 height =30 required> 
+                                <textarea type="text" name="name" value="@bankProductForm("name").value" placeholder="note" rows="10" cols="30" required> </textarea>
              				</div>
                         </div>
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td align="left">
-                    <div class="bank-form" id="login_field_label">
-                        <div class="controls col-xs-offset-3 col-xs-9">
-                            <div class="input-group">
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-bankProduct"></span></span>
-                                <strong>@messages("Bank")</strong> :
-                            </div>
-                        </div>
-                    </div>
-                </td>
-                <td align="center">
-                    <div class="bankProduct-form" id="login_field_value">
-                        <div class="controls col-xs-offset-3 col-xs-9">
-                            <div class="input-group">
-                            <select id="directors-select" name="bankId">
-							@for(bank <- bankProducts){
-     				       <tr>
-               				 <td>@bank.id</td>
-            			    <td>@bank.name</td>
-          				  </tr>       
-  						  <option value="@bank.id">@bank.name</option>
-							}
-						
-                                </select>
-                                
-             				</div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
+          
             
             </tr>
         <br/>
         <div class="form-actions controls ynt-btn-xlarge">
-            <button type="submit" class="btn btn-primary ynt-btn-orange">Add</button>
+            <button type="submit" class="btn btn-primary ynt-btn-orange">Add Note</button>
         </div>
 
     </fieldset>
 </form>
+</fieldset>
 
 
 

@@ -1,0 +1,77 @@
+@(editForm: Form[dao.BankProduct])(implicit request: RequestHeader,messages : Messages)
+@main(Messages("Add Description")) {
+
+
+<form id="bank-data-form" role="form" action='@routes.BankProductController.confirmEdit()' method="post" class="form-horizontal" align="center" autocomplete="off">
+
+    <fieldset class="bank-fieldset">
+
+<div class="user-form">
+            <label class="form-title" style="color: #F8741B; font-size: 22px;font-weight: bold; text-decoration:none">@messages("Add Bank")</label>
+        </div>
+@* adding 'size to helper.select creates a select/option area (single or multi-select) *@
+
+   <br/>    
+    <tr>
+               
+                <td align="center">
+                    <div class="bankProduct-form" id="login_field_value">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">         
+								<input type="hidden" name="id" value="@editForm("id").value" placeholder="note" size = 120 height =30 required>
+             				</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+   			  <tr>
+               
+                <td align="center">
+                    <div class="bankProduct-form" id="login_field_value">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                   
+								<input type="hidden" name="bankId" value="@editForm("bankId").value" placeholder="note" size = 120 height =30 required>
+						
+                     
+                                
+             				</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    <div class="bank-form" id="login_field_label">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-bank"></span></span>
+                                <strong>@messages("Note")</strong> :
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">
+                    <div class="bank-form" id="login_field_value">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                                <input type="text" name="name" value="@editForm("name").value" placeholder="note" size = 120 required> 
+             				</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+          
+            
+            </tr>
+        <br/>
+        <div class="form-actions controls ynt-btn-xlarge">
+            <button type="submit" class="btn btn-primary ynt-btn-orange">Edit</button>
+        </div>
+
+    </fieldset>
+</form>
+
+
+
+}

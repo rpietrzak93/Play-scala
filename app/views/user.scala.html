@@ -21,6 +21,10 @@
          </div>
         }
      }
+ <fieldset class="user-fieldset">
+     <td><a href="@routes.LoginController.showLoginForm">Go to login page</a></td>
+     </fieldset>
+     
 <form id="user-data-form" role="form" action='@routes.UserController.addUser()' method="post" class="form-horizontal" align="center" autocomplete="off">
 
     <fieldset class="user-fieldset">
@@ -175,6 +179,7 @@
     </fieldset>
 </form>
 
+
 <div class="user-display" >
     <fieldset>
         <legend align="center"><h3>Registered Users</h3></legend>
@@ -204,5 +209,5 @@
         </table>
     </fieldset>
 </div>
-
+<!--//-->
 }

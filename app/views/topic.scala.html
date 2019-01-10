@@ -1,0 +1,75 @@
+@(bankForm: Form[dao.BankForm], banks : Seq[dao.Bank])(implicit request: RequestHeader,messages : Messages)
+@main(Messages("Add Topic")) {
+@request.flash.get(messages("flash.success")).map { msg =>
+<div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong>@msg</strong>
+</div>
+}
+@request.flash.get(messages("flash.error")).map { msg =>
+<div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong>@msg</strong>
+</div>
+}
+
+<fieldset class="bank-fieldset">
+
+<td><a href="@routes.LandingPageController.showLandingPage">Go to main page</a></td><br>
+   
+<form id="bank-data-form" role="form" action='@routes.BankController.addBank()' method="post" class="form-horizontal" align="center" autocomplete="off">
+
+<fieldset class="bank-fieldset">
+        <table align="center" cellspacing="20">
+            <tr>
+                <td align="left">
+                    <div class="bank-form" id="login_field_label">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-bank"></span></span>
+                                <strong>@messages("Topic")</strong> :
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">
+                    <div class="bank-form" id="login_field_value">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                                <input type="text" name="name" value="@bankForm("name").value" placeholder="Topic" required>
+             				</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            
+            </tr>
+        </table>
+        <div class="form-actions controls ynt-btn-xlarge">
+            <button type="submit" class="btn btn-primary ynt-btn-orange">Add Topic</button>
+        </div>
+
+    </fieldset>
+</form>
+<div class="bank-display" >
+<fieldset>
+        <legend align="center"><h3>List all topics</h3></legend>
+        <table cellspacing="20">
+            <tr>
+                <th>@messages("id")</th>
+                <th>@messages("name")</th> 
+            </tr>
+            @for(bank <- banks){
+            <tr>
+                <td>@bank.id</td>
+                <td>@bank.name</td>
+           		<td><a href="@routes.BankController.deleteBank(bank.id)">delete Topic with all notes</a></td>
+            </tr>
+            }
+        </table>
+         <legend align="center"><h3><td><a href="@routes.BankProductController.listBankProducts">Create Note</a></td></h3></legend>     
+    </fieldset>
+</div>
+</fieldset>
+
+}

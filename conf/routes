@@ -26,4 +26,22 @@ POST /doLogin             controllers.LoginController.processLoginAttempt
 
 # pages for authenticated users
 GET  /logout              controllers.AuthenticatedUserController.logout
-GET  /landingPage               controllers.LandingPageController.showLandingPage
+GET  /welcomePage               controllers.LandingPageController.showLandingPage
+
+
+#Bank
+GET     /createTopic                       controllers.BankController.listBanks
+POST    /addTopic                        controllers.BankController.addBank
+GET     /deleteTopic/:id                 controllers.BankController.deleteBank(id : Integer)
+GET     /editTopic/:id                   controllers.BankController.editBank(id : Integer)
+
+#BankProduct
+GET     /listNotes                   controllers.BankProductController.listBankProducts
+GET     /listNotesWithTopic                       controllers.BankProductController.listBankAndProducts
+GET     /listAll                       controllers.BankProductController.listAll
+POST    /addNote                       controllers.BankProductController.addBankProduct
+GET     /deleteNote/:id                 controllers.BankProductController.deleteBankProduct(id : Integer)
+
+GET     /editData/                controllers.BankProductController.editData(id : Integer)
+POST    /confirm                      controllers.BankProductController.confirmEdit
+
