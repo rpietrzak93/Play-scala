@@ -31,28 +31,35 @@ class BankController @Inject()
   val bankForm: Form[BankForm] = Form(
   mapping(
       "name"        -> nonEmptyText(maxLength = 140),
+      "owner"        -> nonEmptyText(maxLength = 140),
    
 )(BankForm.apply)(BankForm.unapply))
    
 
-
+  var own: String = " "
 
 
   def listBanks() = Action.async { implicit  request =>
-    //bankService.create("dollar", 2, Some(1))
-    //bankService.create(BankProduct("xxx", 5, Some(1)))
-    
-    bankService.getBankAll() map { banks =>
-      Ok(views.html.topic(bankForm,  banks))
+    val maybeUsername = request.session.get(model.Global.SESSION_USERNAME_KEY)
+      maybeUsername match {
+            case None => {
+                Future.successful(BadRequest("You’re not logged in."))
+            }
+            case Some(u) => {
+                own = u
+                bankService.getBankAll() map { banks =>
+                Ok(views.html.topic(u, bankForm,  banks))
+              }
+            }    
     }
   }
   
   def addBank() = Action.async { implicit request =>     
      bankForm.bindFromRequest.fold(
       // if any error in submitted data
-      errorForm => Future.successful(BadRequest(views.html.topic(errorForm, Seq.empty[Bank]))),
+      errorForm => Future.successful(BadRequest(views.html.topic(own, errorForm, Seq.empty[Bank]))),
       data => { 
-        val newBank = Bank(data.name, 0)
+        val newBank = Bank(data.name, data.owner, 0)
         bankService.createBank(newBank)
         Future.successful(Redirect(routes.BankController.listBanks)
                     .flashing("Success" -> "Bank added")) 
@@ -68,17 +75,17 @@ class BankController @Inject()
   def deleteBank(id : Integer) = Action.async { implicit request =>
     
     bankService.deleteBank(id) map { res =>
-      Redirect(routes.BankController.listBanks())
+      Redirect(routes.BankController.listBanks)
     }
   }
   
   def editBank(id : Integer) = Action.async { implicit request =>
     val eBank = bankService.getBankById(29)
     eBank.flatMap {
-          case Some(a) => val filledForm = bankForm.fill(BankForm(a.name))
+          case Some(a) => val filledForm = bankForm.fill(BankForm(a.name, a.owner))
           bankService.getBankAll() map { banks =>
             
-            Ok(views.html.topic(filledForm,  banks))}
+            Ok(views.html.topic(own, filledForm,  banks))}
             
           case None =>  Future.successful(Redirect(routes.BankController.listBanks)
                     .flashing("Success" -> "Bank added")) 

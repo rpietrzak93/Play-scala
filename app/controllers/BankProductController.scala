@@ -32,12 +32,14 @@ class BankProductController @Inject()
   val bankProductForm: Form[BankProductForm] = Form(
   mapping(
     "name"        -> nonEmptyText(maxLength = 120),
+    "owner"        -> nonEmptyText(maxLength = 120),
     "bankId"      -> number
 )(BankProductForm.apply)(BankProductForm.unapply))
 
 val editForm: Form[BankProduct] = Form(
   mapping(
     "name"        -> nonEmptyText(maxLength = 120),
+    "owner"        -> nonEmptyText(maxLength = 120),
     "bankId"      -> number,
     "id"          -> number
 )(BankProduct.apply)(BankProduct.unapply))
@@ -46,20 +48,27 @@ val editForm: Form[BankProduct] = Form(
 
 private val logoutUrl = routes.AuthenticatedUserController.logout
 
-    // this is where the user comes immediately after logging in.
-    // notice that this uses `authenticatedUserAction`.
-    def showLandingPage() = authenticatedUserAction { implicit request: Request[AnyContent] =>
-        Ok(views.html.loginLandingPage(logoutUrl))
-    }
+var own: String = " "
 
 
 def listBankAndProducts() = Action.async { implicit  request =>
-    //bankService.create("dollar", 2, Some(1))
-    //bankService.create(BankProduct("xxx", 5, Some(1)))
-    val bankProduct = bankService.getBankWithProduct()
-     bankProduct map { banks =>
-      Ok(views.html.showNotes( banks))
+    val maybeUsername = request.session.get(model.Global.SESSION_USERNAME_KEY)
+      maybeUsername match {
+            case None => {
+                Future.successful(BadRequest("You’re not logged in."))
+            }
+            case Some(u) => {
+                own = u
+                val bankProduct = bankService.getBankWithProduct()
+                 bankProduct map { banks =>
+                  Ok(views.html.showNotes(u, banks))
+              }
+              
+            }    
     }
+  
+  
+    
   }
   
   def listAll() = Action.async { implicit  request => 
@@ -71,21 +80,28 @@ def listBankAndProducts() = Action.async { implicit  request =>
 
 
   def listBankProducts() = Action.async { implicit  request =>
-    //bankService.create("dollar", 2, Some(1))
-    //bankService.create(BankProduct("xxx", 5, Some(1)))
-    
-    bankService.getBankAll() map { banks =>
-      Ok(views.html.note(bankProductForm, banks))
+    val maybeUsername = request.session.get(model.Global.SESSION_USERNAME_KEY)
+      maybeUsername match {
+            case None => {
+                Future.successful(BadRequest("You’re not logged in."))
+            }
+            case Some(u) => {
+                own = u
+                bankService.getBankAll() map { banks =>
+                Ok(views.html.note(u, bankProductForm, banks))
+              }
+            }    
     }
+    
   }
   
   def addBankProduct() = Action.async { implicit request =>    
      var list = List.empty[dao.Bank]
      bankProductForm.bindFromRequest.fold(
       // if any error in submitted data
-      errorForm => Future.successful(BadRequest(views.html.note(errorForm,  list))),
+      errorForm => Future.successful(BadRequest(views.html.note(own, errorForm,  list))),
       data => { 
-        val newBank = BankProduct(data.name, data.bankId, 1)
+        val newBank = BankProduct(data.name, data.owner, data.bankId, 1)
         bankService.create(newBank)
         Future.successful(Redirect(routes.BankProductController.listBankAndProducts)
                     .flashing("Success" -> "Note added")) 
@@ -97,11 +113,11 @@ def listBankAndProducts() = Action.async { implicit  request =>
     
      editForm.bindFromRequest.fold(
       // if any error in submitted data
-      errorForm => Future.successful(Redirect(routes.BankProductController.listBankAndProducts)),
+      errorForm => Future.successful(Redirect(routes.BankProductController.listBankAndProducts())),
       data => { 
         Console.println(data.name, data.bankId, data.id)
-        bankService.update(BankProduct(data.name, data.bankId, data.id))
-        Future.successful(Redirect(routes.BankProductController.listBankAndProducts)
+        bankService.update(BankProduct(data.name, data.owner, data.bankId, data.id))
+        Future.successful(Redirect(routes.BankProductController.listBankAndProducts())
                     .flashing("Success" -> "Note added"))               
       })
   }
@@ -121,7 +137,7 @@ def listBankAndProducts() = Action.async { implicit  request =>
   def editData(id : Integer) = Action.async { implicit request =>
     val eBank = bankService.getById(id)
     eBank.flatMap {
-          case Some(a) => val filledForm = editForm.fill(BankProduct(a.name, a.bankId, a.id))
+          case Some(a) => val filledForm = editForm.fill(BankProduct(a.name, a.owner,  a.bankId, a.id))
           bankService.getBankAll() map { banks =>
             
             Ok(views.html.editPage(filledForm))}

@@ -27,7 +27,8 @@ POST /doLogin             controllers.LoginController.processLoginAttempt
 # pages for authenticated users
 GET  /logout              controllers.AuthenticatedUserController.logout
 GET  /welcomePage               controllers.LandingPageController.showLandingPage
-
+GET  /change               controllers.LandingPageController.changePassword
+POST    /confirmEdit                     controllers.LandingPageController.confirmEditUser
 
 #Bank
 GET     /createTopic                       controllers.BankController.listBanks
@@ -44,4 +45,6 @@ GET     /deleteNote/:id                 controllers.BankProductController.delete
 
 GET     /editData/                controllers.BankProductController.editData(id : Integer)
 POST    /confirm                      controllers.BankProductController.confirmEdit
+
+
 

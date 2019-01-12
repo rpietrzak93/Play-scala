@@ -12,6 +12,9 @@ case class User(id : Long ,login: String, password: String, firstName : String, 
 
 case class UserFormData(login: String, password: String, firstName : String, lastName : String , mobile : Long , email : String )
 
+//case class EditUser(id : Int ,login: String, password: String, firstName : String, lastName : String , mobile : Long , email : String)
+
+
 object UserForm{
 
   val userForm = Form(
@@ -24,6 +27,18 @@ object UserForm{
       "mobile" -> longNumber,
       "email" -> email,
     )(UserFormData.apply)(UserFormData.unapply))
+    
+    val editForm = Form(
+    mapping(
+      "id"     -> longNumber,
+      "login" -> nonEmptyText,
+      "password" -> nonEmptyText
+       .verifying("Password must have min 5 chars, one special char and one uppercase letter",  s => validatePassword(s, 5)),
+      "firstName" -> nonEmptyText,
+      "lastName" -> nonEmptyText,
+      "mobile" -> longNumber,
+      "email" -> email,
+    )(User.apply)(User.unapply))
     
 
     val atLeastOneUpperLetterAndAtLeasOneSpecialChar = """(?=.*[A-Z])(?=.*[@#$%^&+=]).*"""

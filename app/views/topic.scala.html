@@ -1,4 +1,4 @@
-@(bankForm: Form[dao.BankForm], banks : Seq[dao.Bank])(implicit request: RequestHeader,messages : Messages)
+@(owner: String, bankForm: Form[dao.BankForm], banks : Seq[dao.Bank])(implicit request: RequestHeader,messages : Messages)
 @main(Messages("Add Topic")) {
 @request.flash.get(messages("flash.success")).map { msg =>
 <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
@@ -15,7 +15,7 @@
 
 <fieldset class="bank-fieldset">
 
-<td><a href="@routes.LandingPageController.showLandingPage">Go to main page</a></td><br>
+<td><a href="@routes.LandingPageController.showLandingPage()">Go to main page</a></td><br>
    
 <form id="bank-data-form" role="form" action='@routes.BankController.addBank()' method="post" class="form-horizontal" align="center" autocomplete="off">
 
@@ -42,6 +42,18 @@
                     </div>
                 </td>
             </tr>
+             <tr>
+                
+                <td align="center">
+                    <div class="bank-form" id="login_field_value">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                                <input type="hidden" name="owner" value="@owner" placeholder="Topic" required>
+             				</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
             
             </tr>
         </table>
@@ -56,15 +68,20 @@
         <legend align="center"><h3>List all topics</h3></legend>
         <table cellspacing="20">
             <tr>
+                <th>@messages("owner")</th> 
                 <th>@messages("id")</th>
                 <th>@messages("name")</th> 
             </tr>
             @for(bank <- banks){
+            @if(bank.owner == owner){
             <tr>
+            <td>@bank.owner</td>
                 <td>@bank.id</td>
                 <td>@bank.name</td>
+                
            		<td><a href="@routes.BankController.deleteBank(bank.id)">delete Topic with all notes</a></td>
             </tr>
+            }
             }
         </table>
          <legend align="center"><h3><td><a href="@routes.BankProductController.listBankProducts">Create Note</a></td></h3></legend>     

@@ -43,17 +43,21 @@ class BankDAOImpl @Inject()
 
   class BankTable(tag: Tag) extends Table[Bank](tag,"bank") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("name")
-    override def * = (name, id) <> (Bank.tupled, Bank.unapply)
+    def name = column[String]("name")    
+    
+    def owner = column[String]("owner")
+    
+    override def * = (name, owner, id) <> (Bank.tupled, Bank.unapply)
     //override def * = (name, id.?) <> (Bank.tupled, Bank.unapply)
   }
   
   class BankProductTable(tag: Tag) extends Table[BankProduct](tag, "bankproduct") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
+    def owner = column[String]("owner")
     def bankId = column[Int]("bank_id")
     def bank = foreignKey("bankproduct_bank_id_fkey", bankId, bankTableQuery)(_.id)
-    override def * = (name, bankId, id) <> (BankProduct.tupled, BankProduct.unapply)
+    override def * = (name, owner, bankId, id) <> (BankProduct.tupled, BankProduct.unapply)
     //override def * = (name, bankId, id.?) <> (BankProduct.tupled, BankProduct.unapply)
 
   }
@@ -142,11 +146,11 @@ class BankDAOImpl @Inject()
 
 }
 
-case class Bank(name: String, id: Int)
-case class BankForm(name: String)
+case class Bank(name: String, owner:String, id: Int)
+case class BankForm(name: String, owner: String)
 
-case class BankProduct(name: String, bankId: Int, id: Int) //Option[Int] = None
-case class BankProductForm(name: String, bankId: Int) 
+case class BankProduct(name: String, owner: String, bankId: Int, id: Int) //Option[Int] = None
+case class BankProductForm(name: String, owner: String, bankId: Int) 
 
 
 

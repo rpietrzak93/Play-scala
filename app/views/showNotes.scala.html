@@ -1,4 +1,4 @@
-@(bankProducts : List[(dao.Bank, dao.BankProduct)])(implicit request: RequestHeader,messages : Messages)
+@(owner: String, bankProducts : List[(dao.Bank, dao.BankProduct)])(implicit request: RequestHeader,messages : Messages)
 @main(Messages("add Note")) {
 @request.flash.get(messages("flash.success")).map { msg =>
 <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
@@ -14,7 +14,7 @@
 }
     <fieldset class="bank-fieldset">
 
-<td><a href="@routes.LandingPageController.showLandingPage">Go to main page</a></td>
+<td><a href="@routes.LandingPageController.showLandingPage()">Go to main page</a></td>
 
 @* adding 'size to helper.select creates a select/option area (single or multi-select) *@
 
@@ -26,15 +26,17 @@
         <table cellspacing="20">
             <tr>
             </tr>
-            @for(bank <- bankProducts){    
+            @for(bank <- bankProducts){ 
+            	@if(bank._1.owner == owner){
             		<tr>
-            		  <td>@bank._2.id</td>             
+            		  <td>@bank._1.owner</td>             
             		  <td>@bank._1.name</td> 
              		  <td>@bank._2.name</td>
              		  <td><a href="@routes.BankProductController.editData(bank._2.id)">edit note</a></td>
              		  <td><a href="@routes.BankProductController.deleteBankProduct(bank._2.id)">delete note</a></td>
             		</tr>
-            	              
+            		
+            	       }       
             }
         </table>
          <legend align="center"><h3><td><a href="@routes.BankProductController.listBankProducts">Create Note</a></td></h3></legend>

@@ -20,11 +20,13 @@ class AuthenticatedUserAction @Inject() (parser: BodyParsers.Default)(implicit e
     override def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[Result]) = {
         logger.info("ENTERED AuthenticatedUserAction::invokeBlock ...")
         val maybeUsername = request.session.get(model.Global.SESSION_USERNAME_KEY)
+        
         maybeUsername match {
             case None => {
                 Future.successful(Forbidden("You’re not logged in."))
             }
             case Some(u) => {
+                Console.println(u.toString())
                 val res: Future[Result] = block(request)
                 res
             }

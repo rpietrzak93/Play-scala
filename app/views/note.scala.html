@@ -1,4 +1,4 @@
-@(bankProductForm: Form[dao.BankProductForm],  bankProducts : List[dao.Bank])(implicit request: RequestHeader,messages : Messages)
+@(owner: String, bankProductForm: Form[dao.BankProductForm],  bankProducts : List[dao.Bank])(implicit request: RequestHeader,messages : Messages)
 @main(Messages("Add Description")) {
 @request.flash.get(messages("flash.success")).map { msg =>
 <div class="col-md-6 col-md-offset-3 alert alert-danger alert-error">
@@ -15,7 +15,7 @@
 
 <fieldset class="bank-fieldset">
 
-<td><a href="@routes.LandingPageController.showLandingPage">Go to main page</a></td>
+<td><a href="@routes.LandingPageController.showLandingPage()">Go to main page</a></td>
 
 
 <form id="bank-data-form" role="form" action='@routes.BankProductController.addBankProduct()' method="post" class="form-horizontal" align="center" autocomplete="off">
@@ -42,11 +42,14 @@
                             <div class="input-group">
                             <select id="directors-select" name="bankId" >
 							@for(bank <- bankProducts){
+							@if(bank.owner == owner){
      				       <tr>
                				 <td>@bank.id</td>
             			    <td>@bank.name</td>
           				  </tr>       
   						  <option value="@bank.id">@bank.name</option>
+							}
+							
 							}
 						
                                 </select>
@@ -77,6 +80,21 @@
                     </div>
                 </td>
             </tr>
+            
+             <tr>
+                
+                <td align="center">
+                    <div class="bank-form" id="login_field_value">
+                        <div class="controls col-xs-offset-3 col-xs-9">
+                            <div class="input-group">
+                            <input type="hidden" name="owner" value="@owner" placeholder="Owner" required>
+                                 
+             				</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+          
           
             
             </tr>

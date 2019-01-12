@@ -1,7 +1,7 @@
-@(logoutUrl: Call)(implicit flash: Flash)
+@(logoutUrl: Call, name: String)(implicit flash: Flash)
 
 @main("Welcome") {
-    <legend align="center"><h1>Welcome</h1></legend>
+    <legend align="center"><h1>Welcome @name</h1></legend>
     @* show the flash message (Option 1) *@
     @flash.get("info").getOrElse("")
     <fieldset>
@@ -10,11 +10,14 @@
     </div>
     </fieldset>
 }
+
+
 <div class="bank-display" >
     
         <legend align="center"><h1>Choose option</h1>
            		<a href="@routes.BankController.listBanks"><button>Create New Topic</button></a><br><br>	
            		<a href="@routes.BankProductController.listBankProducts"><button>Add notes</button></a><br><br>
-           		<a href="@routes.BankProductController.listBankAndProducts"><button> Show All Notes</button></a>
+           		<a href="@routes.BankProductController.listBankAndProducts"><button> Show your Notes</button></a><br><br>          		
+           		<a href="@routes.LandingPageController.changePassword"><button> Change your data</button></a>
             </legend>
 </div>
