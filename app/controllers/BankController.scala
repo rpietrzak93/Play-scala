@@ -79,18 +79,4 @@ class BankController @Inject()
     }
   }
   
-  def editBank(id : Integer) = Action.async { implicit request =>
-    val eBank = bankService.getBankById(29)
-    eBank.flatMap {
-          case Some(a) => val filledForm = bankForm.fill(BankForm(a.name, a.owner))
-          bankService.getBankAll() map { banks =>
-            
-            Ok(views.html.topic(own, filledForm,  banks))}
-            
-          case None =>  Future.successful(Redirect(routes.BankController.listBanks)
-                    .flashing("Success" -> "Bank added")) 
-     }   
-    
-  }
-  
 }

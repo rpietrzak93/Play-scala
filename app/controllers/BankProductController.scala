@@ -70,14 +70,6 @@ def listBankAndProducts() = Action.async { implicit  request =>
   
     
   }
-  
-  def listAll() = Action.async { implicit  request => 
-    bankService.getAllBankWithProduct() map { banks =>
-     
-      Ok(views.html.allNotes(bankProductForm, banks))
-    }
-  }
-
 
   def listBankProducts() = Action.async { implicit  request =>
     val maybeUsername = request.session.get(model.Global.SESSION_USERNAME_KEY)

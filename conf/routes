@@ -34,12 +34,11 @@ POST    /confirmEdit                     controllers.LandingPageController.confi
 GET     /createTopic                       controllers.BankController.listBanks
 POST    /addTopic                        controllers.BankController.addBank
 GET     /deleteTopic/:id                 controllers.BankController.deleteBank(id : Integer)
-GET     /editTopic/:id                   controllers.BankController.editBank(id : Integer)
+
 
 #BankProduct
 GET     /listNotes                   controllers.BankProductController.listBankProducts
-GET     /listNotesWithTopic                       controllers.BankProductController.listBankAndProducts
-GET     /listAll                       controllers.BankProductController.listAll
+GET     /listNotesWithTopic             controllers.BankProductController.listBankAndProducts
 POST    /addNote                       controllers.BankProductController.addBankProduct
 GET     /deleteNote/:id                 controllers.BankProductController.deleteBankProduct(id : Integer)
 
